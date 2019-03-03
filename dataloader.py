@@ -26,8 +26,9 @@ class palm(Dataset):
         
     def __getitem__(self, index):
         img_name = self.img_list[index]
-        img = Image.open(os.path.join(self.path, "train", img_name))
-        if self.train:
+        
+        if self.train: 
+            img = Image.open(os.path.join(self.path, "train", img_name))
             mask_name = img_name.strip('.jpg') + '.bmp'
             mask = Image.open(os.path.join(self.path, "masks", mask_name ))
             mask = PIL.ImageOps.invert(mask)
@@ -38,6 +39,7 @@ class palm(Dataset):
                 return img, mask
     
         else:
+            img = Image.open(os.path.join(self.path, "val", img_name))
             if self.transform is not None: 
                 img = self.transform(img)
                 return img
@@ -49,8 +51,9 @@ class palm(Dataset):
 if __name__ == "__main__":    
     
     root_dir = "/home/nabila/Desktop/datasets/PALM"
-    img_list = sorted(os.listdir(os.path.join(root_dir, 'train')))
-    gt_list = sorted(os.listdir(os.path.join(root_dir, 'masks')))
+    img_list = os.listdir(os.path.join(root_dir, 'train'))
+    gt_list = os.listdir(os.path.join(root_dir, 'masks'))
+    test_list = os.listdir(os.path.join(root_dir, 'val'))
     
     batch_size = 8
     val_split = 0.1
@@ -69,10 +72,13 @@ if __name__ == "__main__":
     train_data = palm(root_dir, np.array(img_list)[train_idx], 
                       transform=transformations, train=True)
     val_data = palm(root_dir, np.array(img_list)[val_idx], 
+                    transform=transformations, train=True)
+    test_data = palm(root_dir, np.array(test_list), 
                     transform=transformations, train=False)
     
     train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True)
     val_loader = DataLoader(val_data, batch_size=batch_size, shuffle=True)
+    test_loader = DataLoader(test_data, batch_size=batch_size, shuffle=True)
     
     #visualize train datasets
     X,Y = next(iter(train_loader))
@@ -87,11 +93,21 @@ if __name__ == "__main__":
     plt.imshow(gt_grid.permute(1,2,0))
 
     # visualize val
-    X = next(iter(val_loader))
+    X, Y = next(iter(val_loader))
     plt.figure()
     plt.title('Val Images')
     grid_img = vutils.make_grid(X, nrow=4)
     plt.imshow(grid_img.permute(1, 2, 0))
 
+    plt.figure()
+    plt.title('Val Ground Truths')
+    gt_grid = vutils.make_grid(Y, nrow=4)
+    plt.imshow(gt_grid.permute(1,2,0))
 
+    # visualize test
+    X = next(iter(test_loader))
+    plt.figure()
+    plt.title('Test Images')
+    grid_img = vutils.make_grid(X, nrow=4)
+    plt.imshow(grid_img.permute(1, 2, 0))
 
