@@ -86,13 +86,29 @@ if __name__ == "__main__":
     plt.title('Images')
     grid_img = vutils.make_grid(X, nrow=4)
     plt.imshow(grid_img.permute(1, 2, 0))
-    
     plt.figure()
     plt.title('Ground Truths')
     gt_grid = vutils.make_grid(Y, nrow=4)
     plt.imshow(gt_grid.permute(1,2,0))
+    
+    # mean and std of training data (90% of train data size)
+    mean = 0.
+    std = 0.
+    nb_samples = 0.
+    for X, _ in train_loader:
+        batch_samples = X.size(0)
+        X = X.view(batch_samples, X.size(1), -1)
+        mean += X.mean(2).sum(0)
+        std += X.std(2).sum(0)
+        nb_samples += batch_samples
+    
+    mean /= nb_samples
+    std /= nb_samples
+    print("mean of dataset:", mean)
+    print("std of dataset:", std)
 
-    # visualize val
+
+    # visualize val data 
     X, Y = next(iter(val_loader))
     plt.figure()
     plt.title('Val Images')
@@ -104,7 +120,7 @@ if __name__ == "__main__":
     gt_grid = vutils.make_grid(Y, nrow=4)
     plt.imshow(gt_grid.permute(1,2,0))
 
-    # visualize test
+    # visualize test data
     X = next(iter(test_loader))
     plt.figure()
     plt.title('Test Images')
