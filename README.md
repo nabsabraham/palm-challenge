@@ -1,8 +1,10 @@
 # palm-challenge
 
-for dataloader, folder structure: 
+for dataloader, folder structure: <br/>
 
-root_dir
-	|____ train
-	|____ masks
-	|____ val
+```
+root_dir <br/>
+	|____ train <br/>
+	|____ masks <br/>
+	|____ val <br/>
+```
