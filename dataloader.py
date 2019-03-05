@@ -47,6 +47,31 @@ class palm(Dataset):
     def __len__(self):
         return len(self.img_list)
 
+class palmFromText(Dataset): 
+    def __init__(self, path, img_dir, transform=None):
+        self.path = path
+        self.transform = transform           
+        self.img_file = open(img_dir, 'r')
+        self.img_anno_list = []
+        for line in self.img_file:
+            self.img_anno_list.append(line[:-1])
+            
+    def __getitem__(self, index):
+        img_name = str(self.img_anno_list[index] + ".jpg")
+        mask_name = str(self.img_anno_list[index] + ".bmp")
+        
+        img = Image.open(os.path.join(self.path, "train", img_name))
+        mask = Image.open(os.path.join(self.path, "masks", mask_name ))
+        mask = PIL.ImageOps.invert(mask)
+
+        if self.transform is not None: 
+            img = self.transform(img)
+            mask = self.transform(mask)
+            return img, mask
+
+    def __len__(self):
+        return len(self.img_anno_list)
+  
 
 if __name__ == "__main__":    
     
@@ -64,17 +89,14 @@ if __name__ == "__main__":
     train_idx, val_idx = indices[split:], indices[:split]
     
     
-    transformations = transforms.Compose([transforms.Resize((imsize, imsize)),
+    t = transforms.Compose([transforms.Resize((imsize, imsize)),
                                           transforms.ToTensor(),
                                           transforms.Normalize([0,0,0],
                                                                [1,1,1])])
     
-    train_data = palm(root_dir, np.array(img_list)[train_idx], 
-                      transform=transformations, train=True)
-    val_data = palm(root_dir, np.array(img_list)[val_idx], 
-                    transform=transformations, train=True)
-    test_data = palm(root_dir, np.array(test_list), 
-                    transform=transformations, train=False)
+    train_data = palm(root_dir, np.array(img_list)[train_idx], transform=t, train=True)
+    val_data = palm(root_dir, np.array(img_list)[val_idx], transform=t, train=True)
+    test_data = palm(root_dir, np.array(test_list), transform=t, train=False)
     
     train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True)
     val_loader = DataLoader(val_data, batch_size=batch_size, shuffle=True)
@@ -107,7 +129,7 @@ if __name__ == "__main__":
     print("mean of dataset:", mean)
     print("std of dataset:", std)
 
-
+    '''
     # visualize val data 
     X, Y = next(iter(val_loader))
     plt.figure()
@@ -126,4 +148,4 @@ if __name__ == "__main__":
     plt.title('Test Images')
     grid_img = vutils.make_grid(X, nrow=4)
     plt.imshow(grid_img.permute(1, 2, 0))
-
+    '''
