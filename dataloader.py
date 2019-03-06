@@ -75,7 +75,8 @@ class palmFromText(Dataset):
 
 if __name__ == "__main__":    
     
-    root_dir = "/home/nabila/Desktop/datasets/PALM"
+    #root_dir = "/home/nabila/Desktop/datasets/PALM"
+    root_dir = "datasets/"
     img_list = os.listdir(os.path.join(root_dir, 'train'))
     gt_list = os.listdir(os.path.join(root_dir, 'masks'))
     test_list = os.listdir(os.path.join(root_dir, 'val'))

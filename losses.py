@@ -39,7 +39,7 @@ def ftl(y_true, y_pred, gamma=0.75):
     return x**gamma
 
 def vae_loss(pred, gt, mu, logvar):
-	dl = dice_loss(pred,gt)
-	kl = -0.001 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp())
-	return kl + dl
+    dl = dice_loss(pred,gt)
+    kl = -0.001 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp())
+    return kl + dl
 
