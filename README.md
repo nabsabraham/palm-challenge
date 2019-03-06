@@ -3,7 +3,7 @@
 for dataloader, folder structure: 
 
 ```
-root_dir <br/>
+root_dir
 	|____ train 
 	|____ masks 
 	|____ val 
