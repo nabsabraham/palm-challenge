@@ -1,3 +1,5 @@
 .ipynb_checkpoints/
 dataset/
 *.pt
+__pycache__/
+help/
