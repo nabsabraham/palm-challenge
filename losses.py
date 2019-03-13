@@ -4,7 +4,6 @@ Metrics and loss functions
 
 @author: Nabilla Abraham
 """
-import cv2
 import numpy as np
 import torch
 import torch.nn as nn

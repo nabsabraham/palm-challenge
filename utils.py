@@ -6,9 +6,12 @@ Created on Sun Mar  3 21:07:15 2019
 @author: nabila
 """
 
-import matplotlib.pyplot as plt 
-import numpy as np
+import torch
 import torch.nn as nn
+import datetime
+import numpy as np
+import shutil
+import matplotlib.pyplot as plt 
 
 def initialize_weights(*models):
     for model in models:
@@ -40,11 +43,11 @@ def dice_numpy(pred, gt):
     dsc = (intersection.sum().sum() + eps) / (pred.sum().sum() + gt.sum().sum() + eps)
     return dsc
 
-# https://github.com/Bjarten/early-stopping-pytorch/blob/master/pytorchtools.py
 
+# https://github.com/Bjarten/early-stopping-pytorch/blob/master/pytorchtools.py
 class EarlyStopping:
     """Early stops the training if validation loss doesn't improve after a given patience."""
-    def __init__(self, patience=7, verbose=False):
+    def __init__(self, model_name='checkpoint', patience=7, verbose=False):
         """
         Args:
             patience (int): How long to wait after last time validation loss improved.
@@ -58,7 +61,8 @@ class EarlyStopping:
         self.best_score = None
         self.early_stop = False
         self.val_loss_min = np.Inf
-
+        self.model_name = model_name
+        
     def __call__(self, val_loss, model):
 
         score = -val_loss
@@ -79,8 +83,9 @@ class EarlyStopping:
     def save_checkpoint(self, val_loss, model):
         '''Saves model when validation loss decrease.'''
         if self.verbose:
-            print('Validation loss decreased ({.6f} --> {.6f}).  Saving model ...'.format(self.val_loss_min,val_loss ))
-        torch.save(model.state_dict(), 'checkpoint.pt')
+            print('Validation loss decreased %.4f --> %.4f).  Saving model ...' % (self.val_loss_min, val_loss))
+        name = self.model_name + '.pt'
+        torch.save(model.state_dict(), name)
         self.val_loss_min = val_loss
 
 # https://github.com/pytorch/examples/blob/537f6971872b839b36983ff40dafe688276fe6c3/imagenet/main.py#L340
