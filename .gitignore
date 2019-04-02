@@ -3,3 +3,5 @@ dataset/
 *.pt
 __pycache__/
 help/
+manuscript/
+

@@ -1,0 +1,15 @@
+{
+    "host": "172.16.30.121",
+    "port": 22,
+    "username": "mmlab",
+    "password": "1",
+    "protocol": "sftp",
+    "agent": null,
+    "privateKeyPath": null,
+    "passphrase": null,
+    "passive": false,
+    "interactiveAuth": false,
+    "remotePath": "/",
+    "uploadOnSave": true,
+    ...
+}
